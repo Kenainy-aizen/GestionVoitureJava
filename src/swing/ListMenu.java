@@ -1,6 +1,7 @@
 package swing;
 
 import Model.Model_Menu;
+import event.event;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -11,6 +12,12 @@ import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
 
 public class ListMenu<E extends Object> extends JList<E> {
+    
+     private event event;
+    
+    public void addEventMenuSelected(event event) {
+        this.event = event;
+    }
 
     private final DefaultListModel model;
     private int selectedIndex = -1;
@@ -26,13 +33,15 @@ public class ListMenu<E extends Object> extends JList<E> {
                     Object o = model.getElementAt(index);
                     if (o instanceof Model_Menu menu) {
                         if (menu.getType() == Model_Menu.MenuType.MENU) {
-                              System.out.println(index);
+                             System.out.println(index);
                             selectedIndex = index;
-                            System.out.println("selected " + selectedIndex);
+                           if (event != null) {
+                               event.selected(index);
+                           }
                         }
                     } else {
                         selectedIndex = index;
-                        System.out.println(index);
+                      //  System.out.println(index);
                     }
                     repaint();
                 }
