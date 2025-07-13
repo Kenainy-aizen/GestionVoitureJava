@@ -4,17 +4,31 @@
  */
 package form;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
+import net.proteanit.sql.DbUtils;
+import testelogin1.ConnexionBD;
 /**
  *
  * @author kenainy
  */
 public class form_voiture extends javax.swing.JPanel {
 
-    /**
-     * Creates new form form_voiture
-     */
+    Connection conn = null;
+    ResultSet rs = null;
+    PreparedStatement ps = null;
+    
+    
     public form_voiture() {
         initComponents();
+        conn = ConnexionBD.conexion();
+           affichage();
+        
     }
 
     /**
@@ -26,21 +40,162 @@ public class form_voiture extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setBackground(new java.awt.Color(204, 204, 204));
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
+        header1 = new component.header();
+        panelBorder1 = new swing.panelBorder();
+        ajouter = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tableVoiture = new swing.table();
+
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jScrollPane1.setViewportView(jTextArea1);
+
+        setBackground(new java.awt.Color(225, 225, 225));
+
+        panelBorder1.setBackground(new java.awt.Color(255, 255, 255));
+
+        ajouter.setFont(new java.awt.Font("sansserif", 1, 18)); // NOI18N
+        ajouter.setText("Ajouter");
+        ajouter.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ajouterActionPerformed(evt);
+            }
+        });
+
+        jScrollPane2.setBorder(null);
+
+        tableVoiture.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "ID Voiture", "Designation", "Prix", "Nombre"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane2.setViewportView(tableVoiture);
+
+        javax.swing.GroupLayout panelBorder1Layout = new javax.swing.GroupLayout(panelBorder1);
+        panelBorder1.setLayout(panelBorder1Layout);
+        panelBorder1Layout.setHorizontalGroup(
+            panelBorder1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelBorder1Layout.createSequentialGroup()
+                .addGap(14, 14, 14)
+                .addComponent(ajouter)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(panelBorder1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1061, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        panelBorder1Layout.setVerticalGroup(
+            panelBorder1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelBorder1Layout.createSequentialGroup()
+                .addGap(16, 16, 16)
+                .addComponent(ajouter, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 603, Short.MAX_VALUE)
+                .addContainerGap())
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(panelBorder1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(header1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 1073, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 419, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(header1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(panelBorder1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void ajouterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ajouterActionPerformed
+        ajoutVoiture act = new ajoutVoiture();
+        act.setVisible(true);
+        affichage();
+    }//GEN-LAST:event_ajouterActionPerformed
+    
+    public void affichage() {
+        
+        try {
+            String requete = "SELECT idvoit as 'ID voiture ', Design as 'Designation' , prix as 'Prix', nombre as 'Nombre' FROM VOITURE ";
+            ps = conn.prepareStatement(requete);
+            rs = ps.executeQuery();
+            tableVoiture.setModel(DbUtils.resultSetToTableModel(rs));
+            
+            DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+             centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+             centerRenderer.setFont(new Font("SansSerif", Font.BOLD, 30));
+            for (int i = 0; i < tableVoiture.getColumnCount(); i++) {
+            tableVoiture.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+            }
+
+            // Supprimer les lignes verticales
+            tableVoiture.setShowVerticalLines(false);
+            tableVoiture.setShowHorizontalLines(true); // Optionnel
+            tableVoiture.getTableHeader().setReorderingAllowed(false); 
+            tableVoiture.setGridColor(Color.LIGHT_GRAY);
+            
+                
+            Font font = new Font("SansSerif", Font.BOLD, 20); // nom, style, taille
+            tableVoiture.setFont(font);
+
+              
+            Font headerFont = new Font("SansSerif", Font.BOLD, 16);
+            tableVoiture.getTableHeader().setFont(headerFont);
+            tableVoiture.setGridColor(new Color(200, 200, 200));
+
+              
+            tableVoiture.setRowHeight(50);
+
+        } catch(Exception e) {
+            System.out.println("--> Exception " +e);
+        }
+        
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton ajouter;
+    private component.header header1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTextArea jTextArea1;
+    private swing.panelBorder panelBorder1;
+    private swing.table tableVoiture;
     // End of variables declaration//GEN-END:variables
 }

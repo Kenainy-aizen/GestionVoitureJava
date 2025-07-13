@@ -88,7 +88,7 @@ public class Login1 extends javax.swing.JFrame {
 
         password.setFont(new java.awt.Font("sansserif", 0, 16)); // NOI18N
         password.setForeground(new java.awt.Color(102, 102, 102));
-        password.setText("KENAINY113");
+        password.setText("KENAINY");
         password.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseMoved(java.awt.event.MouseEvent evt) {
                 passwordMouseMoved(evt);

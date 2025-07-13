@@ -11,15 +11,20 @@ import java.awt.event.MouseMotionAdapter;
 import javax.swing.JFrame;
 //import javax.swing.JPanel;
 import Model.Model_Menu;
+import event.event;
+import java.awt.Event;
 /**
  *
  * @author kenainy
  */
 public class Menu extends javax.swing.JPanel {
-
-    /**
-     * Creates new form Menu
-     */
+    private event event;
+    
+    public void addEventMenuSelected(event event) {
+        this.event = event;
+        
+        listMenu1.addEventMenuSelected(event);
+    }
     public Menu() {
         initComponents();
         setOpaque(false);
@@ -28,7 +33,7 @@ public class Menu extends javax.swing.JPanel {
     }
     
     private void init() {
-       listMenu1.addItem(new Model_Menu("dashbord2", "Dashboard", Model_Menu.MenuType.MENU));
+     //  listMenu1.addItem(new Model_Menu("dashbord2", "Dashboard", Model_Menu.MenuType.MENU));
        listMenu1.addItem(new Model_Menu("client", "Client", Model_Menu.MenuType.MENU));
        listMenu1.addItem(new Model_Menu("voiture4", "Voiture", Model_Menu.MenuType.MENU));
        listMenu1.addItem(new Model_Menu("achat1", " Achat", Model_Menu.MenuType.MENU));
