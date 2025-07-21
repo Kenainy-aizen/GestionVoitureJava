@@ -19,12 +19,17 @@
             <file>file:/home/kenainy/NetBeansProjects/testeLogin1/src/form/form_voiture.java</file>
             <file>file:/home/kenainy/NetBeansProjects/testeLogin1/src/form/form_client.java</file>
             <file>file:/home/kenainy/NetBeansProjects/testeLogin1/src/form/form_achat.java</file>
-            <file>file:/home/kenainy/NetBeansProjects/testeLogin1/src/form/ajoutVoiture.java</file>
             <file>file:/home/kenainy/NetBeansProjects/testeLogin1/src/swing/search.java</file>
             <file>file:/home/kenainy/NetBeansProjects/testeLogin1/src/event/event.java</file>
-            <file>file:/home/kenainy/NetBeansProjects/testeLogin1/src/form/ajoutClient.java</file>
             <file>file:/home/kenainy/NetBeansProjects/testeLogin1/src/swing/table.java</file>
             <file>file:/home/kenainy/NetBeansProjects/testeLogin1/src/swing/tableHeader.java</file>
+            <file>file:/home/kenainy/NetBeansProjects/testeLogin1/src/boite/ajoutAchat.java</file>
+            <file>file:/home/kenainy/NetBeansProjects/testeLogin1/src/boite/ajoutClient.java</file>
+            <file>file:/home/kenainy/NetBeansProjects/testeLogin1/src/boite/ajoutVoiture.java</file>
+            <file>file:/home/kenainy/NetBeansProjects/testeLogin1/src/boite/modifVoiture.java</file>
+            <file>file:/home/kenainy/NetBeansProjects/testeLogin1/src/boite/modifClient.java</file>
+            <file>file:/home/kenainy/NetBeansProjects/testeLogin1/src/boite/modifAchat.java</file>
+            <file>file:/home/kenainy/NetBeansProjects/testeLogin1/src/form/form_recette.java</file>
         </group>
     </open-files>
 </project-private>

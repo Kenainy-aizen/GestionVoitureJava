@@ -4,13 +4,24 @@
  */
 package form;
 
+import Action.ActionCellEditor;
+import Action.ActionCellRenderer;
+import Action.ButtonRendererEditor;
+import Action.PanelActionRendererEditor;
+import boite.ajoutVoiture;
+import boite.modifVoiture;
+import component.header;
 import java.awt.Color;
 import java.awt.Font;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
+import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 import net.proteanit.sql.DbUtils;
 import testelogin1.ConnexionBD;
 /**
@@ -22,12 +33,26 @@ public class form_voiture extends javax.swing.JPanel {
     Connection conn = null;
     ResultSet rs = null;
     PreparedStatement ps = null;
+    static String idVoit = "";
+    String design = "";
+    String prix = "";
+    String nb = "";
     
     
     public form_voiture() {
         initComponents();
         conn = ConnexionBD.conexion();
            affichage();
+           
+            header1.getSearchIconLabel().addMouseListener(new java.awt.event.MouseAdapter() {
+        @Override
+        public void mouseClicked(java.awt.event.MouseEvent evt) {
+            String searchText = header1.getSearchText();
+            System.out.println("Recherche déclenchée avec : " + searchText);
+            // Vous pouvez ici appeler une méthode de filtrage
+            filtrerTableVoiture(searchText);
+        }
+    });
         
     }
 
@@ -40,19 +65,19 @@ public class form_voiture extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
         header1 = new component.header();
         panelBorder1 = new swing.panelBorder();
         ajouter = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         tableVoiture = new swing.table();
-
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
-
-        setBackground(new java.awt.Color(225, 225, 225));
+        jLabel1 = new javax.swing.JLabel();
+        supprimer = new javax.swing.JButton();
+        modifier = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        entreDeux = new javax.swing.JButton();
+        date1 = new com.toedter.calendar.JDateChooser();
+        jDateChooser1 = new com.toedter.calendar.JDateChooser();
 
         panelBorder1.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -97,28 +122,103 @@ public class form_voiture extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
+        tableVoiture.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tableVoitureMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(tableVoiture);
+
+        jLabel1.setFont(new java.awt.Font("sansserif", 0, 36)); // NOI18N
+        jLabel1.setText("LISTES DES VOITURES");
+
+        supprimer.setFont(new java.awt.Font("sansserif", 1, 18)); // NOI18N
+        supprimer.setText("Supprimer");
+        supprimer.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                supprimerMouseClicked(evt);
+            }
+        });
+
+        modifier.setFont(new java.awt.Font("sansserif", 1, 18)); // NOI18N
+        modifier.setText("Modifier");
+        modifier.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                modifierMouseClicked(evt);
+            }
+        });
+        modifier.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                modifierActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setFont(new java.awt.Font("DejaVu Math TeX Gyre", 1, 18)); // NOI18N
+        jLabel2.setText("Premier   date   :");
+
+        jLabel3.setFont(new java.awt.Font("DejaVu Math TeX Gyre", 1, 18)); // NOI18N
+        jLabel3.setText(" Deuxieme date   :");
+
+        entreDeux.setBackground(new java.awt.Color(0, 153, 102));
+        entreDeux.setFont(new java.awt.Font("Andale Mono", 1, 18)); // NOI18N
+        entreDeux.setText("rechercher");
+        entreDeux.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                entreDeuxActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout panelBorder1Layout = new javax.swing.GroupLayout(panelBorder1);
         panelBorder1.setLayout(panelBorder1Layout);
         panelBorder1Layout.setHorizontalGroup(
             panelBorder1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelBorder1Layout.createSequentialGroup()
-                .addGap(14, 14, 14)
+            .addComponent(jScrollPane2)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelBorder1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(ajouter)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(222, 222, 222)
+                .addComponent(supprimer)
+                .addGap(222, 222, 222)
+                .addComponent(modifier)
+                .addGap(454, 454, 454))
             .addGroup(panelBorder1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1061, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGroup(panelBorder1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelBorder1Layout.createSequentialGroup()
+                        .addGap(560, 560, 560)
+                        .addComponent(jLabel1))
+                    .addGroup(panelBorder1Layout.createSequentialGroup()
+                        .addGap(259, 259, 259)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(date1, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(28, 28, 28)
+                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(105, 105, 105)
+                        .addComponent(entreDeux)))
+                .addContainerGap(301, Short.MAX_VALUE))
         );
         panelBorder1Layout.setVerticalGroup(
             panelBorder1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelBorder1Layout.createSequentialGroup()
-                .addGap(16, 16, 16)
-                .addComponent(ajouter, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 603, Short.MAX_VALUE)
+                .addGap(15, 15, 15)
+                .addGroup(panelBorder1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(modifier, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ajouter, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(supprimer, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(69, 69, 69)
+                .addGroup(panelBorder1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(date1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(panelBorder1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(entreDeux, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 87, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addGap(32, 32, 32)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 610, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -126,37 +226,130 @@ public class form_voiture extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panelBorder1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(header1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 1073, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+            .addComponent(panelBorder1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(header1, javax.swing.GroupLayout.DEFAULT_SIZE, 1568, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(header1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panelBorder1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addComponent(header1, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(12, 12, 12)
+                .addComponent(panelBorder1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void ajouterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ajouterActionPerformed
-        ajoutVoiture act = new ajoutVoiture();
-        act.setVisible(true);
-        affichage();
+        
+            java.awt.Frame parent = (java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this);
+            ajoutVoiture dialog = new ajoutVoiture(parent, true);  
+            dialog.setLocationRelativeTo(parent);
+            dialog.setVisible(true);
+
+            affichage();
     }//GEN-LAST:event_ajouterActionPerformed
+
+    private void supprimerMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_supprimerMouseClicked
+        try {
+            String requete = "DELETE FROM VOITURE WHERE idvoit = ?";
+            ps = conn.prepareStatement(requete);
+            ps.setString(1,idVoit);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            System.out.println("---> Exception " +e);
+        }
+        
+        affichage();
+    }//GEN-LAST:event_supprimerMouseClicked
+
+    private void modifierMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_modifierMouseClicked
+        
+    }//GEN-LAST:event_modifierMouseClicked
+
+    private void tableVoitureMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableVoitureMouseClicked
+         DefaultTableModel model = (DefaultTableModel)tableVoiture.getModel();
+         int Myindex = tableVoiture.getSelectedRow();
+    //     System.out.println(Myindex);
+         
+         this.idVoit = model.getValueAt(Myindex, 0).toString();
+         design = model.getValueAt(Myindex, 1).toString();
+         prix = model.getValueAt(Myindex, 2).toString();
+         nb = model.getValueAt(Myindex, 3).toString();
+         
+         
+         System.out.println(idVoit+","+design+","+prix+","+nb);
+         
+    }//GEN-LAST:event_tableVoitureMouseClicked
+
+    private void modifierActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modifierActionPerformed
+            java.awt.Frame parent = (java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this);
+            modifVoiture dialog = new modifVoiture(parent, true);  
+            dialog.setLocationRelativeTo(parent);
+            dialog.setVisible(true);
+            
+            affichage();
+
+    }//GEN-LAST:event_modifierActionPerformed
+
+    private void entreDeuxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_entreDeuxActionPerformed
+        java.util.Date utilDate = date1.getDate();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String date1 = sdf.format(utilDate);
+        
+        java.util.Date utilDate1 = jDateChooser1.getDate();
+        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+        String date2 = sdf1.format(utilDate);
+        
+        
+        
+        
+        
+        try {
+            String requete = "SELECT V.* FROM VOITURE V WHERE NOT EXISTS ( SELECT 1 FROM ACHAT A WHERE A.idvoit = V.idvoit AND A.Date BETWEEN ? AND ?)";
+            ps = conn.prepareStatement(requete);
+            ps.setString(1,date1);
+            ps.setString(2, date2);
+            rs = ps.executeQuery();
+            tableVoiture.setModel(DbUtils.resultSetToTableModel(rs));
+              // Centrer le contenu
+            DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+            centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+            centerRenderer.setFont(new Font("SansSerif", Font.BOLD, 30));
+
+            for (int i = 0; i < tableVoiture.getColumnCount(); i++) {
+                tableVoiture.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+            }
+
+            tableVoiture.setRowHeight(50);
+          //  System.out.println(date1.getText());
+            
+        } catch (Exception e) {
+            System.out.println("--> Exception "+e);
+        }
+    }//GEN-LAST:event_entreDeuxActionPerformed
+    
+    public String getValeurId() {
+        return idVoit;
+    }
+    
     
     public void affichage() {
         
         try {
-            String requete = "SELECT idvoit as 'ID voiture ', Design as 'Designation' , prix as 'Prix', nombre as 'Nombre' FROM VOITURE ";
+      //      String requete = "SELECT idvoit as 'ID voiture ', Design as 'Designation' , prix as 'Prix', nombre as 'Nombre' FROM VOITURE ";
+            String requete = "SELECT idvoit AS 'ID voiture', Design AS 'Designation', CONCAT(FORMAT(prix, 0), ' Ar') AS 'Prix', nombre AS 'Nombre' FROM VOITURE";
+
             ps = conn.prepareStatement(requete);
             rs = ps.executeQuery();
             tableVoiture.setModel(DbUtils.resultSetToTableModel(rs));
+           
+            
+//            tableVoiture.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+//            int actionColIndex = tableVoiture.getColumnCount() - 1;
+//            TableColumn actionColumn = tableVoiture.getColumnModel().getColumn(actionColIndex);
+//            actionColumn.setCellRenderer(new ActionCellRenderer());
+//            actionColumn.setCellEditor(new ActionCellEditor(tableVoiture));
+
             
             DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
              centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
@@ -175,7 +368,7 @@ public class form_voiture extends javax.swing.JPanel {
             Font font = new Font("SansSerif", Font.BOLD, 20); // nom, style, taille
             tableVoiture.setFont(font);
 
-              
+            tableVoiture.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
             Font headerFont = new Font("SansSerif", Font.BOLD, 16);
             tableVoiture.getTableHeader().setFont(headerFont);
             tableVoiture.setGridColor(new Color(200, 200, 200));
@@ -188,14 +381,50 @@ public class form_voiture extends javax.swing.JPanel {
         }
         
     }
+    
+    public void filtrerTableVoiture(String motCle) {
+    try {
+        String requete = "SELECT idvoit AS 'ID voiture', Design AS 'Designation', prix AS 'Prix', nombre AS 'Nombre' FROM VOITURE WHERE Design LIKE ? OR idvoit = ?";
+        ps = conn.prepareStatement(requete);
+        ps.setString(1, "%" + motCle + "%");
+        ps.setString(2, motCle);
+        rs = ps.executeQuery();
+        tableVoiture.setModel(DbUtils.resultSetToTableModel(rs));
+
+        // Centrer le contenu
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        centerRenderer.setFont(new Font("SansSerif", Font.BOLD, 30));
+
+        for (int i = 0; i < tableVoiture.getColumnCount(); i++) {
+            tableVoiture.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
+
+        tableVoiture.setRowHeight(50);
+
+    } catch (Exception e) {
+        System.out.println("Erreur recherche : " + e);
+    }
+}
+
+
+   
+
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton ajouter;
+    private com.toedter.calendar.JDateChooser date1;
+    private javax.swing.JButton entreDeux;
     private component.header header1;
-    private javax.swing.JScrollPane jScrollPane1;
+    private com.toedter.calendar.JDateChooser jDateChooser1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JButton modifier;
     private swing.panelBorder panelBorder1;
+    private javax.swing.JButton supprimer;
     private swing.table tableVoiture;
     // End of variables declaration//GEN-END:variables
 }
