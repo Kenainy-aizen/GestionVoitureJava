@@ -4,14 +4,35 @@
  */
 package form;
 
+import com.lowagie.text.Document;
+import com.lowagie.text.Element;
+import com.lowagie.text.FontFactory;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfWriter;
+import jakarta.mail.Authenticator;
+import jakarta.mail.Message;
+import jakarta.mail.Multipart;
+import jakarta.mail.PasswordAuthentication;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
 import java.awt.Color;
 import java.awt.Font;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Properties;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import net.proteanit.sql.DbUtils;
 import testelogin1.ConnexionBD;
 
@@ -20,7 +41,8 @@ import testelogin1.ConnexionBD;
  * @author kenainy
  */
 public class form_facture1 extends javax.swing.JPanel {
-
+    static String numAchat = "";
+    String email = "";
     Connection conn = null;
     ResultSet rs = null;
     PreparedStatement ps = null;
@@ -60,10 +82,22 @@ public class form_facture1 extends javax.swing.JPanel {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tableFacture.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tableFactureMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tableFacture);
 
+        pdf.setFont(new java.awt.Font("sansserif", 1, 18)); // NOI18N
         pdf.setText("Pdf");
+        pdf.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pdfActionPerformed(evt);
+            }
+        });
 
+        envoyeEmail.setFont(new java.awt.Font("sansserif", 1, 18)); // NOI18N
         envoyeEmail.setText("Envoyer Email");
         envoyeEmail.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -79,8 +113,8 @@ public class form_facture1 extends javax.swing.JPanel {
                 .addGap(512, 512, 512)
                 .addComponent(pdf, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(257, 257, 257)
-                .addComponent(envoyeEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(envoyeEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelBorder1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(header1, javax.swing.GroupLayout.DEFAULT_SIZE, 1565, Short.MAX_VALUE)
@@ -115,13 +149,28 @@ public class form_facture1 extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void envoyeEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_envoyeEmailActionPerformed
-       
+       envoyerEmailAvecPDF(email,"teste","Facture d'achat de voiture","/home/kenainy/NetBeansProjects/testeLogin1/facture_"+numAchat+".pdf");
     }//GEN-LAST:event_envoyeEmailActionPerformed
+
+    private void tableFactureMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableFactureMouseClicked
+        DefaultTableModel model = (DefaultTableModel)tableFacture.getModel();
+         int Myindex = tableFacture.getSelectedRow();
+    //     System.out.println(Myindex);
+         
+          this.numAchat = model.getValueAt(Myindex, 0).toString();
+               email = model.getValueAt(Myindex, 2).toString();
+               
+       
+    }//GEN-LAST:event_tableFactureMouseClicked
+
+    private void pdfActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pdfActionPerformed
+        genererFacturePDF(numAchat);
+    }//GEN-LAST:event_pdfActionPerformed
 
       public void affichage() {
             
         try { 
-            String requete = "SELECT A.numAchat as 'Numero client', C.nom as 'Nom', C.mail as 'Email', SUM(A.qte * V.prix) as 'Montant total', A.date as 'Date' FROM ACHAT A JOIN CLIENT C on A.idcli = C.idcli JOIN VOITURE V on A.idvoit = V.idvoit GROUP BY A.numAchat, C.nom, C.mail, A.date ORDER BY A.numAchat ASC ";
+            String requete = "SELECT A.numAchat as 'Numero achat', C.nom as 'Nom', C.mail as 'Email',CONCAT(FORMAT(SUM(A.qte * V.prix), 0), ' Ar')  as 'Montant total', A.date as 'Date' FROM ACHAT A JOIN CLIENT C on A.idcli = C.idcli JOIN VOITURE V on A.idvoit = V.idvoit GROUP BY A.numAchat, C.nom, C.mail, A.date ORDER BY A.numAchat ASC ";
             ps = conn.prepareStatement(requete);            
             rs = ps.executeQuery();
             tableFacture.setModel(DbUtils.resultSetToTableModel(rs));
@@ -156,6 +205,128 @@ public class form_facture1 extends javax.swing.JPanel {
             System.out.println("--> Exception "+e);
         }
     }
+
+public void genererFacturePDF(String numAchat) {
+    try {
+        
+        ps = conn.prepareStatement("SET lc_time_names = 'fr_FR'");
+        ps.execute();// 1. Infos client + date
+        String infoClientSQL = "SELECT DATE_FORMAT(A.date, '%d %M %Y') AS dateFacturation, C.nom as nomClient, C.contact as contact FROM ACHAT A JOIN CLIENT C on A.idcli = C.idcli WHERE A.numAchat = ? LIMIT 1";
+
+        PreparedStatement ps1 = conn.prepareStatement(infoClientSQL);
+        ps1.setString(1, numAchat);
+        ResultSet rs1 = ps1.executeQuery();
+
+        String dateFacturation = "", nomClient = "", contact = "";
+        if (rs1.next()) {
+            dateFacturation = rs1.getString("dateFacturation");
+            nomClient = rs1.getString("nomClient");
+            contact = rs1.getString("contact");
+        }
+
+        // 2. Création du PDF
+        Document document = new Document();
+        PdfWriter.getInstance(document, new FileOutputStream("facture_" + numAchat + ".pdf"));
+        document.open();
+
+        com.lowagie.text.Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 20);
+        Paragraph title = new Paragraph("FACTURE DE N*"+numAchat, font);
+        title.setAlignment(Element.ALIGN_CENTER);
+        document.add(title);
+        document.add(new Paragraph(" "));
+
+        document.add(new Paragraph("Date de facturation : " + dateFacturation));
+        document.add(new Paragraph("Nom du Client : " + nomClient));
+        document.add(new Paragraph("Contact : " + contact));
+        document.add(new Paragraph(" "));
+
+        // 3. Récupérer les lignes de produits
+        String produitsSQL = "SELECT V.Design AS Design, A.qte AS nombre, V.prix AS prix, (A.qte * V.prix) AS total FROM ACHAT A JOIN VOITURE V ON A.idvoit = V.idvoit WHERE A.numAchat = ? ORDER BY V.Design";
+        PreparedStatement ps2 = conn.prepareStatement(produitsSQL);
+        ps2.setString(1, numAchat);
+        ResultSet rs2 = ps2.executeQuery();
+
+        PdfPTable table = new PdfPTable(4);
+        table.setWidthPercentage(100);
+        table.setWidths(new int[]{4, 2, 3, 3});
+
+        table.addCell("Désignation");
+        table.addCell("Quantité");
+        table.addCell("Prix Unitaire");
+        table.addCell("Total");
+
+        int totalGlobal = 0;
+        while (rs2.next()) {
+              table.addCell(rs2.getString("Design"));
+              table.addCell(rs2.getString("nombre"));
+              String prix = String.format("%,d Ar", rs2.getInt("prix"));     // ← Prix avec "Ar"
+              String total = String.format("%,d Ar", rs2.getInt("total"));
+              table.addCell(prix);
+              table.addCell(total);
+              totalGlobal += rs2.getInt("total");
+        }
+
+        document.add(table);
+        document.add(new Paragraph(" "));
+
+        com.lowagie.text.Font totalFont = new com.lowagie.text.Font(com.lowagie.text.Font.HELVETICA, 14, com.lowagie.text.Font.BOLD);
+        Paragraph total = new Paragraph("Total général : " + String.format("%,d Ar", totalGlobal), totalFont);
+        total.setAlignment(Element.ALIGN_RIGHT);
+        document.add(total);
+
+        document.close();
+        JOptionPane.showMessageDialog(null, "Facture générée avec succès : facture_" + numAchat + ".pdf");
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Erreur génération PDF : " + e.getMessage());
+    }
+}
+
+public void envoyerEmailAvecPDF(String destinataire, String sujet, String messageTexte, String cheminPDF) {
+    final String expediteur = "kenainyravelomanana@gmail.com";
+    final String motDePasse = "ewbh jqkv zbtf pzht"; // Utilise un mot de passe d'application
+
+    Properties props = new Properties();
+    props.put("mail.smtp.auth", "true");
+    props.put("mail.smtp.starttls.enable", "true");
+    props.put("mail.smtp.host", "smtp.gmail.com");
+    props.put("mail.smtp.port", "587");
+
+    Session session = Session.getInstance(props, new Authenticator() {
+        protected PasswordAuthentication getPasswordAuthentication() {
+            return new PasswordAuthentication(expediteur, motDePasse);
+        }
+    });
+
+    try {
+        Message message = new MimeMessage(session);
+        message.setFrom(new InternetAddress(expediteur));
+        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(destinataire));
+        message.setSubject(sujet);
+
+        // Partie texte
+        MimeBodyPart textPart = new MimeBodyPart();
+        textPart.setText(messageTexte);
+
+        // Pièce jointe
+        MimeBodyPart attachmentPart = new MimeBodyPart();
+        attachmentPart.attachFile(new File(cheminPDF));
+
+        Multipart multipart = new MimeMultipart();
+        multipart.addBodyPart(textPart);
+        multipart.addBodyPart(attachmentPart);
+
+        message.setContent(multipart);
+
+        Transport.send(message);
+
+        System.out.println("E-mail envoyé avec succès !");
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

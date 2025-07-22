@@ -78,6 +78,7 @@ public class form_voiture extends javax.swing.JPanel {
         entreDeux = new javax.swing.JButton();
         date1 = new com.toedter.calendar.JDateChooser();
         jDateChooser1 = new com.toedter.calendar.JDateChooser();
+        jLabel4 = new javax.swing.JLabel();
 
         panelBorder1.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -168,6 +169,9 @@ public class form_voiture extends javax.swing.JPanel {
             }
         });
 
+        jLabel4.setFont(new java.awt.Font("sansserif", 0, 18)); // NOI18N
+        jLabel4.setText("Listes des voitures pas encore vendu entre deux dates ici :");
+
         javax.swing.GroupLayout panelBorder1Layout = new javax.swing.GroupLayout(panelBorder1);
         panelBorder1.setLayout(panelBorder1Layout);
         panelBorder1Layout.setHorizontalGroup(
@@ -196,8 +200,11 @@ public class form_voiture extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(105, 105, 105)
-                        .addComponent(entreDeux)))
-                .addContainerGap(301, Short.MAX_VALUE))
+                        .addComponent(entreDeux))
+                    .addGroup(panelBorder1Layout.createSequentialGroup()
+                        .addGap(494, 494, 494)
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 498, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panelBorder1Layout.setVerticalGroup(
             panelBorder1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -207,7 +214,9 @@ public class form_voiture extends javax.swing.JPanel {
                     .addComponent(modifier, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(ajouter, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(supprimer, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(69, 69, 69)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel4)
+                .addGap(33, 33, 33)
                 .addGroup(panelBorder1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(date1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(panelBorder1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -250,6 +259,19 @@ public class form_voiture extends javax.swing.JPanel {
     }//GEN-LAST:event_ajouterActionPerformed
 
     private void supprimerMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_supprimerMouseClicked
+        try {
+            String requete1 = "DELETE FROM ACHAT WHERE idVoit = ? ";
+            ps = conn.prepareStatement(requete1);
+            ps.setString(1, idVoit);
+            ps.executeUpdate();
+            
+        }catch (Exception e) {
+            System.out.println("--> Exception " +e);
+        }
+
+
+
+
         try {
             String requete = "DELETE FROM VOITURE WHERE idvoit = ?";
             ps = conn.prepareStatement(requete);
@@ -298,7 +320,7 @@ public class form_voiture extends javax.swing.JPanel {
         
         java.util.Date utilDate1 = jDateChooser1.getDate();
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
-        String date2 = sdf1.format(utilDate);
+        String date2 = sdf1.format(utilDate1);
         
         
         
@@ -382,7 +404,7 @@ public class form_voiture extends javax.swing.JPanel {
         
     }
     
-    public void filtrerTableVoiture(String motCle) {
+public void filtrerTableVoiture(String motCle) {
     try {
         String requete = "SELECT idvoit AS 'ID voiture', Design AS 'Designation', prix AS 'Prix', nombre AS 'Nombre' FROM VOITURE WHERE Design LIKE ? OR idvoit = ?";
         ps = conn.prepareStatement(requete);
@@ -408,6 +430,8 @@ public class form_voiture extends javax.swing.JPanel {
 }
 
 
+
+
    
 
 
@@ -421,6 +445,7 @@ public class form_voiture extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JButton modifier;
     private swing.panelBorder panelBorder1;

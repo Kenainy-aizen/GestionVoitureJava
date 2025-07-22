@@ -105,6 +105,7 @@ public class modifClient extends javax.swing.JDialog {
             }
         });
 
+        contact.setFont(new java.awt.Font("sansserif", 0, 18)); // NOI18N
         contact.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 contactActionPerformed(evt);
@@ -224,13 +225,13 @@ public class modifClient extends javax.swing.JDialog {
            
             Ps = conn.prepareStatement(requete);
            
-            Ps.setString(3,id);
+            Ps.setString(4,id);
             Ps.setString(1,nom.getText());
             Ps.setString(2,email.getText());
-            Ps.setString(4,contact.getText());
+            Ps.setString(3,contact.getText());
             Ps.executeUpdate();
 
-            JOptionPane.showMessageDialog(null,"Ajouter avec succes");
+            JOptionPane.showMessageDialog(null,"Modifier avec succes");
         }catch(Exception e) {
             System.out.println("---> Exception " + e);
 
@@ -275,7 +276,7 @@ public class modifClient extends javax.swing.JDialog {
                 idClient.setText(t1);
                 nom.setText(t2);
                 email.setText(t3);
-                
+                contact.setText(t4);
             }
             
         } catch(Exception e) {

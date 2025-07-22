@@ -43,8 +43,8 @@
                   <EmptySpace min="-2" pref="512" max="-2" attributes="0"/>
                   <Component id="pdf" min="-2" pref="109" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="257" max="-2" attributes="0"/>
-                  <Component id="envoyeEmail" min="-2" pref="114" max="-2" attributes="0"/>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <Component id="envoyeEmail" min="-2" pref="166" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
@@ -89,6 +89,9 @@
                   </Table>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="tableFactureMouseClicked"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
@@ -96,11 +99,20 @@
         </Component>
         <Component class="javax.swing.JButton" name="pdf">
           <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="sansserif" size="18" style="1"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Pdf"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="pdfActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="envoyeEmail">
           <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="sansserif" size="18" style="1"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Envoyer Email"/>
           </Properties>
           <Events>

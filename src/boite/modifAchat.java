@@ -241,6 +241,7 @@ public class modifAchat extends javax.swing.JDialog {
         try {
             String requete = "UPDATE ACHAT set idcli = ? ,idvoit = ?,date = ? ,qte = ? WHERE numAchat = ? ";
             Ps = conn.prepareStatement(requete);
+       //     Ps.setString(6,idVoiture.getText());
             Ps.setString(5,numAchat.getText());
             Ps.setString(1,idClient.getText());
             Ps.setString(2,idVoiture.getText());

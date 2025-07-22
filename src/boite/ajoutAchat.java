@@ -4,19 +4,40 @@
  */
 package boite;
 
-
-import com.lowagie.text.*;
-import com.lowagie.text.pdf.*;
+//import com.lowagie.text.Font; // ✅ iText (lowagie)
+//import com.lowagie.text.FontFactory;
+//
+//import com.lowagie.text.*;
+//import com.lowagie.text.pdf.*;
+import com.lowagie.text.Document;
+import com.lowagie.text.Element;
+import com.lowagie.text.FontFactory;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfWriter;
+import jakarta.mail.Authenticator;
+import jakarta.mail.Message;
+import jakarta.mail.Multipart;
+import jakarta.mail.PasswordAuthentication;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.awt.Color;
 import java.awt.Font;
+import java.io.File;
+//import java.awt.Font;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Properties;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
@@ -70,6 +91,7 @@ public class ajoutAchat extends javax.swing.JDialog {
         tableUnAchat = new swing.table();
         totalLabel = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
+        pdf = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -156,6 +178,13 @@ public class ajoutAchat extends javax.swing.JDialog {
         jLabel7.setFont(new java.awt.Font("sansserif", 0, 24)); // NOI18N
         jLabel7.setText("Total  des achats :");
 
+        pdf.setText("pdf");
+        pdf.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pdfActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -198,6 +227,8 @@ public class ajoutAchat extends javax.swing.JDialog {
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 1040, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(pdf)
+                        .addGap(91, 91, 91)
                         .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(totalLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -236,17 +267,22 @@ public class ajoutAchat extends javax.swing.JDialog {
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(suivant)
                             .addComponent(ajout))
                         .addGap(119, 119, 119))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(46, 46, 46)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(totalLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(79, Short.MAX_VALUE))))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(46, 46, 46)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(totalLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(54, 54, 54)
+                                .addComponent(pdf)))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -355,23 +391,23 @@ public class ajoutAchat extends javax.swing.JDialog {
                 return;
             }
 
-            if (prixUnitaire >= 50_000_000) {
-                JOptionPane.showMessageDialog(this, "Achat refusé : le prix unitaire dépasse 50 000 000 Ar !");
-                return;
-            }
+//            if (prixUnitaire >= 50_000_000) {
+//                JOptionPane.showMessageDialog(this, "Achat refusé : le prix unitaire dépasse 50 000 000 Ar !");
+//                return;
+//            }
 
             int total = prixUnitaire * qte;
 
-            if (total >= 50_000_000) {
-                JOptionPane.showMessageDialog(this, "Achat refusé : le total de cette ligne dépasse 50 000 000 Ar !");
-                return;
-            }
+//            if (total >= 50_000_000) {
+//                JOptionPane.showMessageDialog(this, "Achat refusé : le total de cette ligne dépasse 50 000 000 Ar !");
+//                return;
+//            }
 
-            if (totalGlobal + total >= 50_000_000) {
-                JOptionPane.showMessageDialog(this, "Achat refusé : le total global dépasse 50 000 000 Ar !");
-                return;
-            }
-            
+//            if (totalGlobal + total >= 50_000_000) {
+//                JOptionPane.showMessageDialog(this, "Achat refusé : le total global dépasse 50 000 000 Ar !");
+//                return;
+//            }
+//            
             
 
             // 2. Insertion dans la table ACHAT
@@ -446,6 +482,10 @@ public class ajoutAchat extends javax.swing.JDialog {
         
     }//GEN-LAST:event_idClientActionPerformed
 
+    private void pdfActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pdfActionPerformed
+       genererFacturePDF(numAchat.getText());
+    }//GEN-LAST:event_pdfActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -482,60 +522,85 @@ public class ajoutAchat extends javax.swing.JDialog {
             }
         });
     }
+  
     
-//    public void genererFacturePDF(String numAchat) {
-//    try {
-//        Document document = new Document();
-//        PdfWriter.getInstance(document, new FileOutputStream("facture_" + numAchat + ".pdf"));
-//        document.open();
-//
-//        // Entête
-//        Font titleFont = new Font(Font.HELVETICA, 18, Font.BOLD);
-//        Paragraph title = new Paragraph("FACTURE D'ACHAT", titleFont);
-//        title.setAlignment(Element.ALIGN_CENTER);
-//        document.add(title);
-//
-//        document.add(new Paragraph(" "));
-//        document.add(new Paragraph("Numéro d'achat : " + numAchat));
-//        document.add(new Paragraph("Date : " + new SimpleDateFormat("dd/MM/yyyy").format(new Date())));
-//        document.add(new Paragraph(" "));
-//
-//        // Tableau
-//        PdfPTable table = new PdfPTable(4); // 4 colonnes
-//        table.setWidthPercentage(100);
-//        table.setWidths(new int[]{4, 2, 3, 3});
-//
-//        // En-têtes
-//        table.addCell("Désignation");
-//        table.addCell("Quantité");
-//        table.addCell("Prix Unitaire");
-//        table.addCell("Total");
-//
-//        DefaultTableModel model = (DefaultTableModel) tableUnAchat.getModel();
-//        for (int i = 0; i < model.getRowCount(); i++) {
-//            table.addCell(model.getValueAt(i, 0).toString()); // Designation
-//            table.addCell(model.getValueAt(i, 1).toString()); // Quantité
-//            table.addCell(model.getValueAt(i, 2).toString()); // Prix Unitaire
-//            table.addCell(model.getValueAt(i, 3).toString()); // Total
-//        }
-//
-//        document.add(table);
-//        document.add(new Paragraph(" "));
-//
-//        // Total général
-//    //    Font totalFont = new Font(Font.HELVETICA, 14, Font.BOLD);
-//        Paragraph total = new Paragraph("Total général : " + String.format("%,d Ar", totalGlobal), totalFont);
-//        total.setAlignment(Element.ALIGN_RIGHT);
-//        document.add(total);
-//
-//        document.close();
-//        JOptionPane.showMessageDialog(this, "Facture générée : facture_" + numAchat + ".pdf");
-//
-//    } catch (Exception e) {
-//        e.printStackTrace();
-//        JOptionPane.showMessageDialog(this, "Erreur génération PDF : " + e.getMessage());
-//    }
-//}
+public void genererFacturePDF(String numAchat) {
+    try {
+        
+        Ps = conn.prepareStatement("SET lc_time_names = 'fr_FR'");
+        Ps.execute();// 1. Infos client + date
+        String infoClientSQL = "SELECT DATE_FORMAT(A.date, '%d %M %Y') AS dateFacturation, C.nom as nomClient, C.contact as contact FROM ACHAT A JOIN CLIENT C on A.idcli = C.idcli WHERE A.numAchat = ? LIMIT 1";
+
+        PreparedStatement ps1 = conn.prepareStatement(infoClientSQL);
+        ps1.setString(1, numAchat);
+        ResultSet rs1 = ps1.executeQuery();
+
+        String dateFacturation = "", nomClient = "", contact = "";
+        if (rs1.next()) {
+            dateFacturation = rs1.getString("dateFacturation");
+            nomClient = rs1.getString("nomClient");
+            contact = rs1.getString("contact");
+        }
+
+        // 2. Création du PDF
+        Document document = new Document();
+        PdfWriter.getInstance(document, new FileOutputStream("facture_" + numAchat + ".pdf"));
+        document.open();
+
+        com.lowagie.text.Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 20);
+        Paragraph title = new Paragraph("FACTURE DE N*"+numAchat, font);
+        title.setAlignment(Element.ALIGN_CENTER);
+        document.add(title);
+        document.add(new Paragraph(" "));
+
+        document.add(new Paragraph("Date de facturation : " + dateFacturation));
+        document.add(new Paragraph("Nom du Client : " + nomClient));
+        document.add(new Paragraph("Contact : " + contact));
+        document.add(new Paragraph(" "));
+
+        // 3. Récupérer les lignes de produits
+        String produitsSQL = "SELECT V.Design AS Design, A.qte AS nombre, V.prix AS prix, (A.qte * V.prix) AS total FROM ACHAT A JOIN VOITURE V ON A.idvoit = V.idvoit WHERE A.numAchat = ? ORDER BY V.Design";
+        PreparedStatement ps2 = conn.prepareStatement(produitsSQL);
+        ps2.setString(1, numAchat);
+        ResultSet rs2 = ps2.executeQuery();
+
+        PdfPTable table = new PdfPTable(4);
+        table.setWidthPercentage(100);
+        table.setWidths(new int[]{4, 2, 3, 3});
+
+        table.addCell("Désignation");
+        table.addCell("Quantité");
+        table.addCell("Prix Unitaire");
+        table.addCell("Total");
+
+        int totalGlobal = 0;
+        while (rs2.next()) {
+              table.addCell(rs2.getString("Design"));
+              table.addCell(rs2.getString("nombre"));
+              String prix = String.format("%,d Ar", rs2.getInt("prix"));     // ← Prix avec "Ar"
+              String total = String.format("%,d Ar", rs2.getInt("total"));
+              table.addCell(prix);
+              table.addCell(total);
+              totalGlobal += rs2.getInt("total");
+        }
+
+        document.add(table);
+        document.add(new Paragraph(" "));
+
+        com.lowagie.text.Font totalFont = new com.lowagie.text.Font(com.lowagie.text.Font.HELVETICA, 14, com.lowagie.text.Font.BOLD);
+        Paragraph total = new Paragraph("Total général : " + String.format("%,d Ar", totalGlobal), totalFont);
+        total.setAlignment(Element.ALIGN_RIGHT);
+        document.add(total);
+
+        document.close();
+        JOptionPane.showMessageDialog(null, "Facture générée avec succès : facture_" + numAchat + ".pdf");
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Erreur génération PDF : " + e.getMessage());
+    }
+}
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton ajout;
@@ -553,6 +618,7 @@ public class ajoutAchat extends javax.swing.JDialog {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField nombre;
     private javax.swing.JTextField numAchat;
+    private javax.swing.JButton pdf;
     private javax.swing.JButton suivant;
     private swing.table tableUnAchat;
     private javax.swing.JLabel totalLabel;

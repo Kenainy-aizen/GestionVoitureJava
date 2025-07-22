@@ -161,15 +161,27 @@ public class form_client extends javax.swing.JPanel {
     private void supprimerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_supprimerActionPerformed
         
         try {
+            String requete1 = "DELETE FROM ACHAT WHERE idcli = ? ";
+            ps = conn.prepareStatement(requete1);
+            ps.setString(1, idCli);
+            ps.executeUpdate();
+            
+        }catch (Exception e) {
+            System.out.println("--> Exception " +e);
+        }
+        
+        try {
             String requete = "DELETE FROM CLIENT WHERE idcli = ? ";
             ps = conn.prepareStatement(requete);           
             ps.setString(1,idCli);
             ps.executeUpdate();
             
+            
+            
         } catch (Exception e ) {
             System.out.println("---> Exception " +e);
         }
-        
+       
         affichage();
         idCli = "";
         nom = "";
