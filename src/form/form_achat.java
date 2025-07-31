@@ -33,6 +33,15 @@ public class form_achat extends javax.swing.JPanel {
         initComponents();
         conn = ConnexionBD.conexion();
         affichage();
+           header1.getSearchIconLabel().addMouseListener(new java.awt.event.MouseAdapter() {
+        @Override
+        public void mouseClicked(java.awt.event.MouseEvent evt) {
+            String searchText = header1.getSearchText();
+            System.out.println("Recherche déclenchée avec : " + searchText);
+            // Vous pouvez ici appeler une méthode de filtrage
+           filtrerTableAchat(searchText);
+        }
+    });
     }
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -365,6 +374,32 @@ public class form_achat extends javax.swing.JPanel {
     public String getNumAchat() {
         return numAchat;
     }
+    
+    public void filtrerTableAchat(String motCle) {
+    try {
+        String requete = "SELECT numAchat as 'Numero Achat', idcli as 'ID client', idvoit as 'ID voiture', Date as 'Date', qte as 'nombre' FROM ACHAT WHERE numAchat = ?";
+        ps = conn.prepareStatement(requete);
+       // ps.setString(1, "%" + motCle + "%");
+        ps.setString(1, motCle);
+        rs = ps.executeQuery();
+        tableAchat.setModel(DbUtils.resultSetToTableModel(rs));
+
+        // Centrer le contenu
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        centerRenderer.setFont(new Font("SansSerif", Font.BOLD, 30));
+
+        for (int i = 0; i < tableAchat.getColumnCount(); i++) {
+            tableAchat.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
+
+        tableAchat.setRowHeight(50);
+
+    } catch (Exception e) {
+        System.out.println("Erreur recherche : " + e);
+    }
+}
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton ajouter;
     private com.toedter.calendar.JDateChooser date1;

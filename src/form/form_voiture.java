@@ -44,13 +44,13 @@ public class form_voiture extends javax.swing.JPanel {
         conn = ConnexionBD.conexion();
            affichage();
            
-            header1.getSearchIconLabel().addMouseListener(new java.awt.event.MouseAdapter() {
+        header1.getSearchIconLabel().addMouseListener(new java.awt.event.MouseAdapter() {
         @Override
         public void mouseClicked(java.awt.event.MouseEvent evt) {
             String searchText = header1.getSearchText();
             System.out.println("Recherche déclenchée avec : " + searchText);
             // Vous pouvez ici appeler une méthode de filtrage
-            filtrerTableVoiture(searchText);
+          //  filtrerTableVoiture(searchText);
         }
     });
         

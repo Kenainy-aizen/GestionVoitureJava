@@ -50,7 +50,17 @@ public class form_facture1 extends javax.swing.JPanel {
     public form_facture1() {
         initComponents();
         conn = ConnexionBD.conexion();
+         header1.getSearchIconLabel().addMouseListener(new java.awt.event.MouseAdapter() {
+        @Override
+        public void mouseClicked(java.awt.event.MouseEvent evt) {
+            String searchText = header1.getSearchText();
+            System.out.println("Recherche déclenchée avec : " + searchText);
+            // Vous pouvez ici appeler une méthode de filtrage
+            filtrerTableFacture(searchText);
+        }
+        });
         affichage();
+        
     }
 
     /**
@@ -285,7 +295,7 @@ public void genererFacturePDF(String numAchat) {
 
 public void envoyerEmailAvecPDF(String destinataire, String sujet, String messageTexte, String cheminPDF) {
     final String expediteur = "kenainyravelomanana@gmail.com";
-    final String motDePasse = "ewbh jqkv zbtf pzht"; // Utilise un mot de passe d'application
+    final String motDePasse = "ewbh jqkv zbtf pzht"; 
 
     Properties props = new Properties();
     props.put("mail.smtp.auth", "true");
@@ -324,6 +334,32 @@ public void envoyerEmailAvecPDF(String destinataire, String sujet, String messag
         System.out.println("E-mail envoyé avec succès !");
     } catch (Exception e) {
         e.printStackTrace();
+    }
+}
+
+    
+public void filtrerTableFacture(String motCle) {
+    try {
+        String requete = "SELECT A.numAchat as 'Numero achat', C.nom as 'Nom', C.mail as 'Email',CONCAT(FORMAT(SUM(A.qte * V.prix), 0), ' Ar')  as 'Montant total', A.date as 'Date' FROM ACHAT A JOIN CLIENT C on A.idcli = C.idcli JOIN VOITURE V on A.idvoit = V.idvoit WHERE A.numAchat = ? or C.nom LIKE ? GROUP BY A.numAchat, C.nom, C.mail, A.date ORDER BY A.numAchat ASC ";
+        ps = conn.prepareStatement(requete);
+        ps.setString(2, "%" + motCle + "%");
+        ps.setString(1, motCle);
+        rs = ps.executeQuery();
+        tableFacture.setModel(DbUtils.resultSetToTableModel(rs));
+
+        // Centrer le contenu
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        centerRenderer.setFont(new Font("SansSerif", Font.BOLD, 30));
+
+        for (int i = 0; i < tableFacture.getColumnCount(); i++) {
+            tableFacture.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
+
+        tableFacture.setRowHeight(50);
+
+    } catch (Exception e) {
+        System.out.println("Erreur recherche : " + e);
     }
 }
 

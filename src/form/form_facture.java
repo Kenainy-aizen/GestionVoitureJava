@@ -22,6 +22,7 @@ public class form_facture extends javax.swing.JFrame {
         initComponents();
         conn = ConnexionBD.conexion();
         affichage();
+            
     }
 
    

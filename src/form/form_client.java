@@ -28,6 +28,16 @@ public class form_client extends javax.swing.JPanel {
     public form_client() {
         initComponents();
         conn = ConnexionBD.conexion();
+             
+        header1.getSearchIconLabel().addMouseListener(new java.awt.event.MouseAdapter() {
+        @Override
+        public void mouseClicked(java.awt.event.MouseEvent evt) {
+            String searchText = header1.getSearchText();
+            System.out.println("Recherche déclenchée avec : " + searchText);
+            // Vous pouvez ici appeler une méthode de filtrage
+            filtrerTableClient(searchText);
+        }
+        });
         affichage();
     }
 
@@ -253,7 +263,31 @@ public class form_client extends javax.swing.JPanel {
      public String getValeurId() {
         return idCli;
     }
-    
+    public void filtrerTableClient(String motCle) {
+    try {
+        String requete = "SELECT idcli AS 'ID client', nom AS 'Nom', mail AS 'E-mail', contact AS 'Contact' FROM CLIENT WHERE nom LIKE ? OR idcli = ?";
+        ps = conn.prepareStatement(requete);
+        ps.setString(1, "%" + motCle + "%");
+        ps.setString(2, motCle);
+        rs = ps.executeQuery();
+        tableClient.setModel(DbUtils.resultSetToTableModel(rs));
+        
+        // Centrer le contenu
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        centerRenderer.setFont(new Font("SansSerif", Font.BOLD, 30));
+
+        for (int i = 0; i < tableClient.getColumnCount(); i++) {
+            tableClient.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
+        
+        
+        tableClient.setRowHeight(50);
+
+    } catch (Exception e) {
+        System.out.println("Erreur recherche : " + e);
+    }
+}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton ajouter;
