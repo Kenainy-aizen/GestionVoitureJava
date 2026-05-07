@@ -50,7 +50,7 @@ public class form_voiture extends javax.swing.JPanel {
             String searchText = header1.getSearchText();
             System.out.println("Recherche déclenchée avec : " + searchText);
             // Vous pouvez ici appeler une méthode de filtrage
-          //  filtrerTableVoiture(searchText);
+            filtrerTableVoiture(searchText);
         }
     });
         
